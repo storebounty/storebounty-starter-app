@@ -187,6 +187,27 @@ Key ideas:
 * `api_base_url` – override if you’re pointing at a non‑default endpoint.
 * Other fields – can be used by themes, onboarding, or custom logic.
 
+### Getting your `STORE_ID` and access token
+
+To connect the starter app to your store, you need two things from the StoreBounty admin dashboard at https://admin.storebounty.com:
+
+#### 1. Get your `STORE_ID`
+
+1. Log in to the StoreBounty admin dashboard.
+2. Look at the **bottom of the side menu** – you’ll see your **Store ID** displayed there.
+3. Copy this value and use it as `store_id` in `config/storebounty.json`.
+
+#### 2. Get your mobile app access token
+
+The access token is tied to the **Mobile App** sales channel and is exposed only after your access request is approved.
+
+1. In the side menu, go to **Settings → Sales Channels**.
+2. Search for the **Mobile App** sales channel and **request access**.
+3. Our team will review your request and grant access.
+4. Once access is granted, go again to **Settings → Developers** in the side menu.
+5. On the Developers page, click on **Mobile App** – your **access token** will be shown there.
+6. Copy this value and use it as `x_access_token` in `config/storebounty.json`.
+
 Rule of thumb: treat the file downloaded from StoreBounty as the **source of truth**. If your downloaded file differs from the snippet above, follow that structure, not this example.
 
 ---
