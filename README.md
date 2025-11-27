@@ -1,636 +1,383 @@
-StoreBounty Starter App
+# StoreBounty Starter App
 
-The StoreBounty Starter App is a Flutter/Dart reference application and testbed for developers who want to build a mobile storefront for any StoreBounty store with minimal effort.
+A **Flutter/Dart starter** and **testbed** for building mobile storefronts for any StoreBounty store — with live data, prebuilt flows, and theming handled for you.
 
-Instead of rebuilding product listing, cart, checkout, authentication, and theming from scratch, this starter app wires together StoreBounty’s published Flutter packages and a simple JSON config file so you can:
+---
 
-Point the app at any StoreBounty store (via storebounty.json).
+## What is this?
 
-Pull live data from StoreBounty APIs.
+The **StoreBounty Starter App** is a reference app that:
 
-Use prebuilt screens and flows from StoreBounty packages.
+* Reads a simple config file (`config/storebounty.json`) to know **which StoreBounty store** to talk to.
+* Uses published **StoreBounty Flutter packages** for:
 
-Focus almost entirely on branding, theming, and UX, not plumbing.
+  * Initialization & configuration
+  * Onboarding screens
+  * Themed storefront UI
+  * Cart management
+  * Authentication
+  * Checkout
+* Lets you focus on **branding, theming, and UX**, instead of wiring APIs and business logic yourself.
 
-High-Level Architecture
+If you want a “just skin it and ship” mobile app for an existing StoreBounty store, this is the starting point.
 
-At a high level, the app is built around two ideas:
+---
 
-Config-Driven Store Selection
+## Who is this for?
 
-At runtime, the app loads config/storebounty.json (bundled as an asset). 
-GitHub
+This starter is ideal if you are:
 
-That file contains the identifiers and tokens for the target StoreBounty store (e.g. STORE_ID, X_ACCESS_TOKEN, environment, API base, etc.).
+* A **Flutter developer** who wants to ship a StoreBounty‑powered storefront quickly.
+* An **agency / dev shop** building multiple white‑label apps for different StoreBounty stores.
+* A **StoreBounty merchant** with an in‑house dev who just wants a branded app, not a new backend.
 
-The storebounty_init package reads this JSON and exposes strongly-typed access to the store’s data and configuration in your Flutter code. 
-Dart packages
+---
 
-Composable StoreBounty Packages
+## How it works (high‑level)
 
-The starter app depends on a set of StoreBounty Flutter packages (see pubspec.yaml): 
-GitHub
+1. At startup, the app loads **`config/storebounty.json`** (bundled as an asset).
+2. That JSON file contains at least:
 
-storebounty_init – core initialization & data access (store details, payment gateways, etc.). 
-Dart packages
+   * `store_id`
+   * `x_access_token`
+   * Other store‑level details and environment hints.
+3. StoreBounty’s init package reads this config and configures:
 
-storebounty_cart_manager – cart storage and price/total calculations. 
-Dart packages
-+1
+   * Which store to call
+   * Which environment to hit (sandbox / production, etc.).
+4. The app then composes **StoreBounty UI + logic packages** (themes, onboarding, cart, auth, checkout).
+5. You customize:
 
-storebounty_onboarding – intro / onboarding screens that present what the store offers. 
-Dart packages
-+1
+   * Assets (logos, hero images, icons)
+   * Theme and layout
+   * Any extra screens you want to bolt on.
 
-storebounty_themes – theming, layout, and prebuilt storefront UI components. 
-Dart packages
-+1
+Result: a fully working, **live** storefront app with minimal glue code.
 
-storebounty_auth – authentication for customers (login, access control). 
-Dart packages
+---
 
-storebounty_checkout – unified checkout flow (delivery details, payments, order confirmation). 
-Dart packages
-+1
+## Project structure
 
-The starter app wires these together into a working storefront so you can just:
+At a glance:
 
-Drop in your storebounty.json.
-
-Choose / tweak a theme.
-
-Ship a branded mobile storefront.
-
-Repository Layout
-
-From the repo root: 
-GitHub
-
+```text
 .
-├── android/           # Android platform files
-├── ios/               # iOS platform files
+├── android/           # Android runner
+├── ios/               # iOS runner
 ├── macos/             # macOS runner
 ├── linux/             # Linux runner
 ├── windows/           # Windows runner
 ├── web/               # Web support (if enabled)
 ├── assets/
-│   ├── images/        # Storefront images (logos, banners, etc.)
-│   └── icons/         # Custom icons
+│   ├── images/        # Logos, banners, product imagery, hero art
+│   └── icons/         # App icons and custom icon assets
 ├── config/
-│   └── storebounty.json   # Store configuration (YOU customize this)
-├── lib/
-│   └── ...            # Flutter app source (entrypoint, widget tree, etc.)
+│   └── storebounty.json   # StoreBounty config (you provide this)
+├── lib/               # Flutter application code
+│   ├── main.dart      # Entry point
+│   └── ...            # Screens, widgets, navigation, etc.
 ├── test/              # Flutter tests
-├── pubspec.yaml       # Dependencies & asset configuration
+├── pubspec.yaml       # Dependencies & asset declarations
 ├── analysis_options.yaml
 └── README.md
+```
 
+The **two most important things** you’ll touch:
 
-Key pieces for you as a StoreBounty integrator:
+* `config/storebounty.json` → binds this app to a specific StoreBounty store.
+* `lib/` and `assets/` → where you implement your branding and custom UX.
 
-config/storebounty.json – the file that binds this app to a specific store.
+---
 
-assets/images & assets/icons – where you skin the app visually.
+## StoreBounty packages used
 
-lib/ – where you:
+The starter app is designed to sit on top of several StoreBounty Flutter packages (names/versions may vary over time):
 
-Adjust routes & navigation.
+| Package                    | Responsibility (conceptually)                                         |
+| -------------------------- | --------------------------------------------------------------------- |
+| `storebounty_init`         | Loads `storebounty.json`, exposes store config & common data helpers. |
+| `storebounty_onboarding`   | Intro / onboarding screens about the store and its offerings.         |
+| `storebounty_themes`       | Prebuilt themes & storefront UI: lists, product cards, layouts, etc.  |
+| `storebounty_cart_manager` | Cart storage & mutations, totals calculation.                         |
+| `storebounty_auth`         | Authentication flows and helpers for customer login.                  |
+| `storebounty_checkout`     | Checkout flow: delivery details, payment, order confirmation.         |
 
-Wrap StoreBounty components with your own widgets.
+You don’t have to wire these from scratch — the starter app already does the heavy lifting.
+Your main job is to **configure**, **compose**, and **skin**.
 
-Add extra screens (blog, help center, etc.).
+---
 
-Requirements
-1. Tooling
+## Requirements
 
-Flutter SDK: Dart SDK constraint is >=2.19.2 <3.0.0, which corresponds to Flutter 3.x in practice. 
-GitHub
+* **Flutter SDK**: any recent 3.x release that supports Dart ≥ 2.19.
+* A working Flutter setup for:
 
-A working Flutter environment for:
+  * Android (emulator or device)
+  * iOS (Xcode + simulator or device)
+* A **StoreBounty business account** and at least one store with API access.
 
-Android (Android Studio / emulator or physical device)
+---
 
-iOS (Xcode + simulator or device)
+## Quickstart
 
-Optionally web & desktop (if you care about those targets).
+### 1. Clone the repo
 
-2. StoreBounty Account & Store Config
-
-You need a StoreBounty Business Account and at least one store. 
-admin.storebounty.com
-+1
-
-From the StoreBounty Admin Portal, you generate/download your storebounty.json file, which contains credentials and store metadata required by storebounty_init. 
-Dart packages
-
-Quick Start (TL;DR)
-
-Clone the repo:
-
+```bash
 git clone https://github.com/storebounty/storebounty-starter-app.git
 cd storebounty-starter-app
+```
 
+### 2. Drop in your `storebounty.json`
 
-Drop in your store config:
+Inside the `config/` directory, place your store’s configuration file:
 
-Place your storebounty.json inside the config/ folder (replace any placeholder file).
+```text
+config/
+└── storebounty.json
+```
 
-Confirm that config/ is listed as an asset in pubspec.yaml (it already is in this repo). 
-GitHub
+You typically get this from the StoreBounty admin portal / developer section.
+Replace any placeholder file in that folder.
 
-Install dependencies:
+Tip: avoid committing live production secrets to a public repo. For open‑sourcing your fork, consider a `.env` strategy or keep that file out of version control.
 
+### 3. Install dependencies
+
+```bash
 flutter pub get
+```
 
+### 4. Run the app
 
-Run the app:
-
-# Android
-flutter run -d android
-
-# iOS
-flutter run -d ios
-
-# or just
+```bash
+# default connected device
 flutter run
 
+# explicitly target Android / iOS if needed
+flutter run -d android
+flutter run -d ios
+```
 
-Start theming:
+If `storebounty.json` is valid and your store is correctly configured, you should now see **live data from your StoreBounty store** in the app.
 
-Replace images/icons under assets/images and assets/icons.
+---
 
-Adjust colors/typography via storebounty_themes and your own widgets.
+## Configuration: `config/storebounty.json`
 
-At this point, you have a fully working StoreBounty mobile storefront pulling live data from your store through StoreBounty APIs, using the official packages.
+This file is the **contract** between your app and StoreBounty.
 
-Configuration: config/storebounty.json
-What storebounty.json Represents
+A simplified conceptual shape (your real file may have more/different fields):
 
-The storebounty.json file is the bridge between your Flutter app and StoreBounty:
-
-It tells storebounty_init which store to talk to.
-
-It includes the access token(s) needed to call StoreBounty APIs on behalf of that store.
-
-It can contain environment info (e.g., production vs sandbox) and other store-level metadata used by StoreBounty packages. 
-Dart packages
-
-You normally do not hand-craft this file – you download it from the StoreBounty Admin Portal, which guarantees the correct structure and keys. 
-Dart packages
-+1
-
-Typical Fields (Illustrative)
-
-Exact field names come from the portal and may evolve, but conceptually you should expect entries such as:
-
+```json
 {
   "store_id": "YOUR_STORE_ID",
   "x_access_token": "YOUR_X_ACCESS_TOKEN",
   "environment": "production",
   "api_base_url": "https://api.storebounty.com",
-  "store_name": "Your Brand Name",
+  "store_name": "Your Store Name",
   "theme": "default_teal"
 }
+```
 
+Key ideas:
 
-Key points:
+* `store_id` – which store to pull catalog, prices, orders, etc. from.
+* `x_access_token` – access token for StoreBounty APIs for this app.
+* `environment` – choose between `sandbox`, `staging`, `production`, etc., depending on how your backend is set up.
+* `api_base_url` – override if you’re pointing at a non‑default endpoint.
+* Other fields – can be used by themes, onboarding, or custom logic.
 
-store_id: Identifies which store’s catalog, customers, and orders to work with.
+Rule of thumb: treat the file downloaded from StoreBounty as the **source of truth**. If your downloaded file differs from the snippet above, follow that structure, not this example.
 
-x_access_token: API access token for authenticated calls from the mobile app.
+---
 
-environment: Lets you point the app to staging/sandbox if needed.
+## Application flow (runtime overview)
 
-api_base_url: Optional override when talking to non-default endpoints.
+Think of the app lifecycle like this:
 
-If the structure from the Admin Portal differs from the example above, always treat the downloaded file as the source of truth.
+1. **Bootstrap**
 
-Asset Wiring
+   * `main()` triggers the StoreBounty init flow, which:
 
-The pubspec.yaml already declares config/ as an asset folder: 
-GitHub
+     * Loads `config/storebounty.json` as an asset.
+     * Parses it into internal models.
+     * Prepares store metadata and endpoints.
 
-flutter:
-  uses-material-design: true
-  assets:
-    - config/
-    - assets/images/
-    - assets/icons/
+2. **Onboarding (first run)**
 
+   * `storebounty_onboarding` shows an intro: what the store does, what users can expect.
+   * You can customize copy and imagery to match the brand.
 
-This lets storebounty_init load config/storebounty.json at runtime without extra work on your side.
+3. **Themed storefront**
 
-Initialization Flow
+   * The root of the app is a StoreBounty theme/widget (from `storebounty_themes`).
+   * It renders:
 
-The canonical pattern recommended by storebounty_init is: 
-Dart packages
+     * Product listings and categories.
+     * Access to product details.
+     * Cart entry points.
+   * You can wrap this with your own `MaterialApp` and navigation.
 
-import 'package:flutter/material.dart';
-import 'package:storebounty_init/storebountyinit.dart';
+4. **Cart**
 
-void main() {
-  // Initialize StoreBounty core (reads storebounty.json, sets up data)
-  StoreBountyInit.trigger();
+   * Cart logic is delegated to `storebounty_cart_manager`:
 
-  // Run your Flutter app
-  runApp(MyApp());
-}
+     * Add / remove / update line items.
+     * Maintain a persistent cart.
+     * Compute totals, discounts, etc.
 
+5. **Authentication**
 
-StoreBountyInit.trigger():
+   * When a flow requires a logged‑in customer, the app relies on `storebounty_auth`:
 
-Loads storebounty.json from config/.
+     * Sign‑in screen(s).
+     * Session management.
+     * Checks at critical points (for example, before checkout).
 
-Hydrates core models such as store data, payment gateways, etc.
+6. **Checkout**
 
-Makes this data available via StoreBountyCore helpers (for example StoreBountyCore.getStore()). 
-Dart packages
+   * `storebounty_checkout` orchestrates:
 
-If you change the app structure, keep this invariant: trigger StoreBounty initialisation once before runApp(...).
+     * Address and delivery details.
+     * Payment integration.
+     * Order creation and confirmation screen.
 
-StoreBounty Packages in This Starter
+7. **Subsequent launches**
 
-This section spells out what each imported StoreBounty package does and how the starter app is meant to leverage it.
+   * Onboarding typically gets skipped after first run.
+   * Cart and login state can be restored, depending on how you configure persistence.
 
-storebounty_init
+---
 
-Purpose: Shared core utilities, configuration loading (storebounty.json), and access to store data. 
-Dart packages
+## Theming and branding
 
-You use it to:
+The point of this starter is: **you don’t rewrite core flows; you reskin them.**
 
-Bootstrap the app (StoreBountyInit.trigger()).
+### 1. Update assets
 
-Retrieve the current store and other configuration via helper APIs (e.g. StoreBountyCore.getStore()).
+Replace the placeholders in:
 
-storebounty_themes
+* `assets/images/`
+* `assets/icons/`
 
-Purpose: Provides prebuilt themes and UI components for StoreBounty mobile apps. It controls the global look & feel (colors, fonts, layout) and wires together flows from other packages. 
-Dart packages
+with your brand’s:
 
-Example usage (from package docs):
+* logos
+* splash / hero art
+* product category/icons illustrations
+* empty state graphics
 
-import 'package:storebounty_themes/entry/entrypoint.dart';
+Update any references in your widget tree if you rename anything.
 
-class AppHome extends StatelessWidget {
-  const AppHome({Key? key}) : super(key: key);
+### 2. Customize themes
 
-  @override
-  Widget build(BuildContext context) {
-    return StorebountyTheme(
-      goToCheckout: () {
-        // 1. Use storebounty_auth to confirm user is logged in
-        // 2. Navigate to storebounty_checkout screen
-      },
-    );
-  }
-}
+Depending on how you structure it, your main widget will usually be a theme entry widget from the StoreBounty themes package.
 
+Typical things to tweak:
 
-Inside this starter app, your root widget will typically be a StorebountyTheme (or something that composes it), and you can:
+* Primary / secondary colors
+* App bar styling
+* Typography (font families, weights)
+* Button radius, spacing, etc.
 
-Pick a predefined theme.
+You can either:
 
-Override colors/fonts/icons.
+* **Extend** the default theme (quickest), or
+* **Wrap** the StoreBounty widgets in your own design system for full control.
 
-Plug your checkout navigation into goToCheckout. 
-Dart packages
-+1
+### 3. Navigation and extra screens
 
-storebounty_onboarding
+You can—and should—add your own screens around the core storefront:
 
-Purpose: Introductory/onboarding screens explaining what the store offers. 
-Dart packages
-+1
+* About / brand story
+* Help and FAQ
+* Contact / support
+* Blog, content, etc.
 
-How the starter uses it conceptually:
+Generally you will:
 
-First-time users see an onboarding carousel (hero images, short text).
+1. Keep a standard `MaterialApp` with a route table.
+2. Mount the StoreBounty root view as one of the routes.
+3. Add your extra routes around it.
 
-After completion, they land in the themed storefront UI.
+---
 
-What you can customize:
+## Development workflow
 
-Images and iconography via assets/images/ and assets/icons/.
+A typical workflow for a merchant or client‑specific app:
 
-Copy (e.g. value propositions, taglines) either through config or by wrapping the onboarding widget in your own.
+1. Create a new store in StoreBounty for that brand.
+2. Generate `storebounty.json` from the StoreBounty portal.
+3. Fork or clone this starter app.
+4. Drop `storebounty.json` into `config/`.
+5. Run and verify that live products and categories appear.
+6. Skin and customize:
 
-storebounty_cart_manager
+   * Colors, fonts, imagery.
+   * Navigation and additional screens.
+7. Add platform‑specific polish:
 
-Purpose: Handles all cart operations and aggregates totals. 
-Dart packages
-+1
+   * App icon and splash screens.
+   * Store listing assets (screenshots, descriptions).
+8. Ship:
 
-Capabilities:
+   * Android: Play Store / internal distribution.
+   * iOS: App Store / TestFlight.
 
-Add/remove/update cart items.
+Then repeat for the next store if you are doing white‑label work.
 
-Compute total amounts/prices for the cart.
+---
 
-Persist cart state using shared_preferences.
+## Troubleshooting
 
-Why it matters here:
+### App builds but shows no data
 
-The starter app delegates cart logic to this package so you don’t re-implement cart state management.
+Check:
 
-UI components from storebounty_themes and storebounty_onboarding rely on it for cart data.
+* Is `config/storebounty.json` present?
+* Is `config/` registered as an asset in `pubspec.yaml`?
+* Is the file valid JSON?
+* Are `store_id` and `x_access_token` correct and active?
 
-storebounty_auth
+### Crash or error very early in startup
 
-Purpose: Unified authentication layer for StoreBounty mobile apps; integrates tightly with storebounty_init. 
-Dart packages
+Typical causes:
 
-Typical workflow:
+* JSON parse error in `storebounty.json`.
+* Asset not found (typo in filename or missing `config/` entry in `pubspec.yaml`).
+* No network connectivity when calling StoreBounty APIs.
 
-Before checkout or accessing restricted views, check if user is logged in.
+### Checkout doesn’t proceed
 
-If not, redirect to auth screens provided by this package.
+Likely issues:
 
-Used in combination with:
+* User is not authenticated and the authentication flow is not wired correctly.
+* Your checkout navigation is not properly pointing into the `storebounty_checkout` flow.
+* API credentials or payment gateway configuration is incomplete in StoreBounty.
 
-storebounty_themes and storebounty_checkout, where the goToCheckout callback normally:
+---
 
-Validates login via storebounty_auth.
+## Contributing
 
-Navigates to the checkout flow in storebounty_checkout. 
-Dart packages
-+1
+If you’d like to improve this starter app:
 
-storebounty_checkout
+1. Fork the repo.
+2. Create a feature branch.
+3. Make small, focused changes with clear commit messages.
+4. Open a pull request describing:
 
-Purpose: Standardized checkout UX for StoreBounty ecosystem – payment and delivery details collection. 
-Dart packages
-+1
+   * What changed.
+   * Why it’s needed.
+   * Any breaking changes or migration notes.
 
-Responsibilities:
+Ideas that are always welcome:
 
-Capture delivery details and shipping method.
+* Extra example themes.
+* Better error and empty states.
+* Sample integrations (push notifications, analytics, etc.).
 
-Integrate with StoreBounty payment options.
+---
 
-Finalize orders and surface confirmation to the user.
+## License
 
-Why use it instead of building your own:
-
-Avoid duplicating checkout logic across multiple storefront apps.
-
-Inherit any improvements/fixes from the core StoreBounty team by simply bumping package versions.
-
-Theming & Branding
-
-The starter app is deliberately thin on custom UI logic and leans heavily on storebounty_themes. 
-Dart packages
-+1
-
-What You Can Change Quickly
-
-Colors & Typography
-
-Use the theme options in storebounty_themes to:
-
-Change primary/secondary colors.
-
-Adjust typography (font families and weights).
-
-Customize icon style if provided by the theme.
-
-Images & Icons
-
-Replace or add files under:
-
-assets/images/
-assets/icons/
-
-
-Update any image references you add in your own widgets.
-
-Layout & UX Details
-
-Wrap or extend the widgets from storebounty_themes:
-
-Inject your own app bars, footer widgets, or floating action buttons.
-
-Add additional pages (blog, help center, etc.) and link them from the main navigation.
-
-Creating Your Own “Theme”
-
-You have two broad options:
-
-Extend Existing Themes
-
-Keep using StorebountyTheme as your root widget.
-
-Override configuration properties or pass custom builders where available.
-
-Useful when you like the default structure but want brand-specific cosmetics.
-
-Create a Custom Wrapper
-
-Create your own top-level widget that:
-
-Calls StoreBountyInit.trigger() before building the app.
-
-Uses storebounty_init and storebounty_cart_manager directly for data.
-
-Composes only specific pieces of storebounty_themes that you care about.
-
-Best for highly customized experiences while still reusing StoreBounty logic.
-
-Typical App Flow
-
-Conceptually, once properly configured, the starter app behaves as follows:
-
-Bootstrap
-
-main() calls StoreBountyInit.trigger() which:
-
-Loads and parses config/storebounty.json.
-
-Sets up store data, allowed payment gateways, etc. 
-Dart packages
-
-Onboarding (first run)
-
-storebounty_onboarding shows intro screens about the store’s offerings. 
-Dart packages
-+1
-
-Themed Storefront
-
-Root widget (often StorebountyTheme) renders:
-
-Product listings.
-
-Categories.
-
-Cart icon with item count.
-
-Navigation scaffolding.
-
-Cart & Checkout
-
-All cart actions funnel through storebounty_cart_manager. 
-Dart packages
-+1
-
-On checkout:
-
-storebounty_auth confirms user is logged in.
-
-User is forwarded to storebounty_checkout which captures delivery/payment details and places the order. 
-Dart packages
-+1
-
-Subsequent Launches
-
-Onboarding is typically skipped based on stored flags.
-
-Users land directly on the themed storefront, with cart state restored from storage if storebounty_cart_manager was configured that way.
-
-Developing & Extending the Starter App
-Running in Development
-
-Standard Flutter flow:
-
-# Install dependencies
-flutter pub get
-
-# Run on default device
-flutter run
-
-# Run on specific device
-flutter devices         # list available
-flutter run -d <device_id>
-
-
-Use flutter run -d chrome or desktop devices if you want to validate web/desktop as well (subject to package support).
-
-Where to Put Your Code
-
-New screens – under lib/ in the standard Flutter way (e.g. lib/screens/, lib/widgets/).
-
-Navigation – if you add your own routes, mount them around or inside the StoreBounty entry widgets.
-
-Business-specific logic – encapsulate in separate Dart files or packages so the starter remains a clean shell.
-
-Recommended Extension Patterns
-
-Custom Routes Around StoreBounty UI
-
-Wrap the main StoreBounty entry widget with your own MaterialApp navigator where you define additional named routes.
-
-Hooks for Marketing Flows
-
-Insert deep links or cross-links to marketing content, loyalty programs, or referral flows.
-
-Feature Flags
-
-Introduce a small config layer (e.g. local JSON or remote flags) to toggle certain UI features without modifying the StoreBounty packages.
-
-Troubleshooting
-1. App builds but shows empty or broken data
-
-Likely causes:
-
-storebounty.json is missing or malformed.
-
-The file is not in config/ or not packaged as an asset.
-
-Checklist:
-
-Verify config/storebounty.json exists in the repo.
-
-Ensure flutter: → assets: includes - config/ in pubspec.yaml. 
-GitHub
-
-Confirm you copied the file from the StoreBounty Admin Portal and did not edit required fields. 
-Dart packages
-+1
-
-2. App fails on StoreBountyInit.trigger()
-
-Likely causes:
-
-Runtime error while parsing storebounty.json.
-
-Network connectivity issues on first data fetch.
-
-Suggestions:
-
-Check your logs for JSON parsing errors.
-
-Run on a device/emulator with internet access.
-
-Confirm that api_base_url (if present) points to a reachable endpoint.
-
-3. Checkout not working
-
-Likely causes:
-
-goToCheckout callback not properly wired.
-
-storebounty_auth not invoked before storebounty_checkout. 
-Dart packages
-+1
-
-Suggestions:
-
-Ensure your StorebountyTheme goToCheckout callback:
-
-Checks login status via storebounty_auth.
-
-Navigates to a screen that uses storebounty_checkout.
-
-Updating StoreBounty Packages
-
-All StoreBounty packages are listed in pubspec.yaml with pinned versions: 
-GitHub
-+1
-
-dependencies:
-  storebounty_init: ^0.0.2
-  storebounty_cart_manager: ^0.0.4
-  storebounty_onboarding: ^0.0.2
-  storebounty_themes: ^0.0.4
-  storebounty_auth: ^0.0.2
-  storebounty_checkout: ^0.0.5
-
-
-To update:
-
-flutter pub upgrade --major-versions
-
-
-Then test:
-
-Initialization (no breaking changes in StoreBountyInit.trigger()).
-
-Onboarding flow.
-
-Cart & checkout end-to-end.
-
-If a particular package introduces a breaking change, refer to its pub.dev changelog.
-
-Contributing
-
-If you’d like to:
-
-Add example screens showing advanced theming.
-
-Improve error handling and logging.
-
-Add sample unit/widget tests.
-
-…then you can:
-
-Fork the repo.
-
-Create a feature branch.
-
-Open a PR with:
-
-A clear description of the change.
-
-Screenshots (for UI changes).
-
-Notes about any new configuration options.
+See the `LICENSE` file in this repository (if present) or the license terms for the individual StoreBounty packages on pub.dev.
